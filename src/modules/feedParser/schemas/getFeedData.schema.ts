@@ -6,7 +6,7 @@ export const  getFeedDataSchema ={
     type: 'object',
     properties: {
       url: { type: 'string' },
-      force: { type: 'string', enum: ['1', '0'], default: '0' }
+      force: { type: 'boolean', default: false }
     }
   },
   response: {

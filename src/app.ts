@@ -1,17 +1,37 @@
 import { join } from "node:path";
 import AutoLoad from "@fastify/autoload";
-import Fastify, {  type FastifyServerOptions } from "fastify";
+import fastifySwagger from "@fastify/swagger";
+import fastifySwaggerUi from "@fastify/swagger-ui";
+import Fastify, { type FastifyServerOptions } from "fastify";
 import configPlugin from "./config";
 import { authRoutes } from "./modules/auth/routes/auth.route";
-import { newsRoutes } from "./modules/news/routes/news.route";
 import { getFeedDataRoutes } from "./modules/feedParser/routes/feedParser.route";
-
+import { newsRoutes } from "./modules/news/routes/news.route";
 
 export type AppOptions = Partial<FastifyServerOptions>;
 
 async function buildApp(options: AppOptions = {}) {
 	const fastify = Fastify({ logger: true });
 	await fastify.register(configPlugin);
+
+	fastify.register(fastifySwagger, {
+		swagger: {
+			info: {
+				title: "API docs",
+				description: "REST API documentation",
+				version: "1.0.0",
+			},
+			tags: [],
+		},
+	});
+
+	fastify.register(fastifySwaggerUi, {
+		routePrefix: "/docs",
+		uiConfig: {
+			docExpansion: "full",
+			deepLinking: false,
+		},
+	});
 
 	try {
 		fastify.decorate("pluginLoaded", (pluginName: string) => {
