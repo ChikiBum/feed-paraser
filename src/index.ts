@@ -8,8 +8,8 @@ async function start() {
     const port = fastify.config.PORT
     const host = fastify.config.HOST
 
-    fastify.listen({port, host}, (err, address) => {
-        if(err){
+    fastify.listen({ port, host }, (err, address) => {
+        if (err) {
             console.log(err)
             process.exit(1)
         }

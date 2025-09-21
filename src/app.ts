@@ -1,15 +1,15 @@
-import Fastify, {FastifyServerOptions} from "fastify";
-import {join} from "node:path";
+import Fastify, { FastifyServerOptions } from "fastify";
+import { join } from "node:path";
 import AutoLoad from "@fastify/autoload";
 import configPlugin from "./config";
-import {getFeedDataRoutes} from "./modules/feedParser/routes/feedParser.route";
+import { getFeedDataRoutes } from "./modules/feedParser/routes/feedParser.route";
 
 export type AppOptions = Partial<FastifyServerOptions>
 
-async function buildApp(options: AppOptions = {}){
+async function buildApp(options: AppOptions = {}) {
 
-  const fastify = Fastify({logger: true})
-    await  fastify.register(configPlugin)
+    const fastify = Fastify({ logger: true })
+    await fastify.register(configPlugin)
 
     try {
         fastify.decorate("pluginLoaded", (pluginName: string) => {
@@ -30,7 +30,11 @@ async function buildApp(options: AppOptions = {}){
     }
 
     fastify.get("/", async (request, reply) => {
-        return {hello: "world"}
+        return { hello: "worlder" }
+    })
+
+    fastify.get('/health', async () => {
+        return { status: 'ok1' }
     })
 
     fastify.register(getFeedDataRoutes)
