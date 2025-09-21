@@ -2,23 +2,23 @@ import type { JsonSchemaToTsProvider } from "@fastify/type-provider-json-schema-
 import type { FastifyInstance } from "fastify";
 import { getNewsSchema } from "../schemas/getNews.schema";
 import { getNewsByIdSchema } from "../schemas/getNewsById.schema";
+import { getAllNewsByUser, getNewsById } from "../service/news.service";
 
 export async function newsRoutes(fastify: FastifyInstance) {
-  const route = fastify.withTypeProvider<JsonSchemaToTsProvider>();
+	const route = fastify.withTypeProvider<JsonSchemaToTsProvider>();
 
-  route.get("/all", { schema: getNewsSchema }, async (_request, reply) => {
-    reply.send([
-      { id: "1", title: "Новина 1", content: "Текст новини", date: new Date().toISOString() }
-    ]);
-  });
+	route.get("/all", { schema: getNewsSchema }, async (_request, reply) => {
+		const newsArr = await getAllNewsByUser(fastify, _request.user.id);
+		reply.send(newsArr);
+	});
 
-  route.get("/:id", { schema: getNewsByIdSchema }, async (request, reply) => {
-    const { id } = request.params as { id: string };
-
-    if (id === "1") {
-      reply.send({ id: "1", title: "Новина 1", content: "Текст новини", date: new Date().toISOString() });
-    } else {
-      reply.code(404).send({ message: "Новина не знайдена" });
-    }
-  });
+	route.get("/:id", { schema: getNewsByIdSchema }, async (request, reply) => {
+		const { id } = request.params as { id: string };
+		const news = await getNewsById(fastify, id);
+		if (!news) {
+			reply.code(404).send({ message: "Новина не знайдена" });
+		} else {
+			reply.send(news);
+		}
+	});
 }

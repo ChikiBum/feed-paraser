@@ -13,9 +13,13 @@ export const getNewsByIdSchema = {
       type: 'object',
       properties: {
         id: { type: 'string' },
-        title: { type: 'string' },
-        content: { type: 'string' },
-        date: { type: 'string', format: 'date-time' }
+        site: { type: 'string' },
+        url: { type: 'string' },
+        parsed: { type: 'boolean' },
+        forced: { type: 'boolean' },
+        userId: { type: 'string', nullable: true },
+        createdAt: { type: 'string', format: 'date-time' },
+        updatedAt: { type: 'string', format: 'date-time' }
       }
     },
     404: {
