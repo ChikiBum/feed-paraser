@@ -1,4 +1,4 @@
-import {Config} from "../config/schema";
+import type {Config} from "../config/schema";
 
 declare module 'fastify' {
     interface FastifyInstance {
@@ -6,3 +6,9 @@ declare module 'fastify' {
         pluginLoaded: (pluginName: string) => void;
     }
 };
+
+declare module "fastify" {
+	interface FastifyInstance {
+		prisma: PrismaClient;
+	}
+}
