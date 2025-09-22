@@ -1,11 +1,6 @@
 import type { JsonSchemaToTsProvider } from "@fastify/type-provider-json-schema-to-ts";
 import type { FastifyInstance } from "fastify";
 import { getFeedDataSchema } from "../schemas/getFeedData.schema";
-import {
-	getFeedFromDb,
-	parseFeed,
-	saveFeedToDb,
-} from "../services/feedDbMock.service";
 
 const DEFAULT_FEED_URL = "https://example.com/rss";
 
