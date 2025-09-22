@@ -1,5 +1,4 @@
 import type { FastifyInstance } from "fastify";
-import bcrypt from "fastify-bcrypt";
 import { loginSchema } from "../schemas/authLogin.schema";
 import { registerSchema } from "../schemas/authRegister.schema";
 

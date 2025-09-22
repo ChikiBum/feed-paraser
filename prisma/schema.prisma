@@ -19,13 +19,17 @@ model User {
 }
 
 model News {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  site      String
-  url       String   @unique
-  parsed    Boolean  @default(false)
-  forced    Boolean  @default(false)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  site        String
+  url         String   @unique
+  title       String   @default("")
+  textContent String
+  htmlContent String
+  image       String?
+  parsed      Boolean  @default(false)
+  forced      Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   user   User?   @relation(fields: [userId], references: [id], name: "UserNews")
   userId String? @map("user_id") @db.ObjectId
