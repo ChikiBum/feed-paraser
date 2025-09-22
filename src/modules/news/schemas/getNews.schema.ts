@@ -9,6 +9,7 @@ export const getNewsSchema = {
     required: ['userId'] 
   },
   response: {
+    401: { type: 'object', properties: { message: { type: 'string' } } },
     200: {
       type: 'array',
       items: {

@@ -13,7 +13,7 @@ export default fp(
       try {
         await instance.prisma.$disconnect();
       } catch (err) {
-        fastify.log.error("Помилка при закритті Prisma:", err);
+        fastify.log.error("Error while closing Prisma:", err);
         throw err;
       }
     });
