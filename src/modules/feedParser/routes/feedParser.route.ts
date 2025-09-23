@@ -1,40 +1,162 @@
-import type { JsonSchemaToTsProvider } from "@fastify/type-provider-json-schema-to-ts";
-import type { FastifyInstance } from "fastify";
-import { getFeedDataSchema } from "../schemas/getFeedData.schema";
-import {
-	getFeedFromDb,
-	parseFeed,
-	saveFeedToDb,
-} from "../services/feedDbMock.service";
-
-const DEFAULT_FEED_URL = "https://example.com/rss";
+import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
+import * as xml2js from "xml2js";
+import { feedParserSchema } from "../schemas/feedParser.schema";
+import type {
+	NewsRecord,
+	RSSFeed,
+	RSSItem,
+	SiteRecord,
+} from "../types/rss-feed.type";
 
 export async function getFeedDataRoutes(fastify: FastifyInstance) {
-	const route = fastify.withTypeProvider<JsonSchemaToTsProvider>();
+	fastify.post(
+		"/parse",
+		{
+			schema: feedParserSchema,
+			preValidation: [fastify.authenticate],
+		},
+		async (request: FastifyRequest, reply: FastifyReply) => {
+			const { url } = request.body as { url: string };
+			const userId = (request.user as { id: string }).id;
 
-	route.get("/data", { schema: getFeedDataSchema }, async (request, reply) => {
-		const { url, force } = request.query;
-		const feedUrl = url || DEFAULT_FEED_URL;
+			let feedRaw: string;
+			try {
+				const response = await fetch(url);
+				if (!response.ok) {
+					return reply.badRequest("Failed to fetch feed");
+				}
+				feedRaw = await response.text();
+			} catch (err) {
+				fastify.log.error("Error fetching feed:", err);
+				return reply.badRequest("Could not fetch feed");
+			}
 
-		if (force) {
-			const feed = await parseFeed(feedUrl);
-			await saveFeedToDb(feedUrl, feed);
-			reply.send({ feed, source: "parsed" });
-			return;
+			let rss: RSSFeed;
+			try {
+				rss = (await xml2js.parseStringPromise(feedRaw, {
+					trim: true,
+					explicitArray: false,
+				})) as RSSFeed;
+			} catch (err) {
+				fastify.log.error("Error parsing RSS XML:", err);
+				return reply.badRequest("Invalid RSS format");
+			}
+
+			const itemsRaw = rss?.rss?.channel?.item;
+			const items: RSSItem[] = Array.isArray(itemsRaw)
+				? itemsRaw
+				: itemsRaw
+					? [itemsRaw]
+					: [];
+
+			if (!items.length) {
+				return reply.code(200).send({ news: [] });
+			}
+
+			let siteRecord: SiteRecord;
+			try {
+				siteRecord = (await fastify.prisma.site.create({
+					data: {
+						feed: url,
+						userId: userId,
+					},
+				}) as unknown) as SiteRecord;
+			} catch (err) {
+				fastify.log.error("Error saving site to DB:", err);
+				return reply.internalServerError("Could not save feed site");
+			}
+
+			const newsResults: Array<
+				Pick<NewsRecord, "id" | "site" | "url" | "title">
+			> = [];
+			for (const item of items) {
+				const newsUrl = item.link;
+				const title = item.title || "";
+
+				try {
+					const news = (await fastify.prisma.news.create({
+						data: {
+							site: url,
+							url: newsUrl,
+							title,
+							siteId: siteRecord.id,
+							userId: userId,
+							textContent: item.description || "",
+							htmlContent: item.description || "",
+						},
+					})) as NewsRecord;
+					newsResults.push({
+						id: news.id,
+						site: news.site,
+						url: news.url,
+						title: news.title,
+					});
+				} catch (err) {
+					fastify.log.error("Error saving news to DB:", err);
+				}
+			}
+
+			reply.send({ news: newsResults });
+		},
+	);
+
+	fastify.post(
+		"/test",
+		{
+			schema: feedParserSchema,
+		},
+		async (request: FastifyRequest, reply: FastifyReply) => {
+			const { url } = request.body as { url: string };
+
+			let feedRaw: string;
+			try {
+				const response = await fetch(url);
+				if (!response.ok) {
+					return reply.badRequest("Failed to fetch feed");
+				}
+				feedRaw = await response.text();
+			} catch (err) {
+				fastify.log.error("Error fetching feed:", err);
+				return reply.badRequest("Could not fetch feed");
+			}
+
+			let rss: RSSFeed;
+			try {
+				rss = (await xml2js.parseStringPromise(feedRaw, {
+					trim: true,
+					explicitArray: false,
+				})) as RSSFeed;
+			} catch (err) {
+				fastify.log.error("Error parsing RSS XML:", err);
+				return reply.badRequest("Invalid RSS format");
+			}
+
+			const itemsRaw = rss?.rss?.channel?.item;
+			const items: RSSItem[] = Array.isArray(itemsRaw)
+				? itemsRaw
+				: itemsRaw
+					? [itemsRaw]
+					: [];
+
+			if (!items.length) {
+				return reply.code(200).send({ news: [] });
+			}
+
+			const limitedItems = items.slice(0, 10);
+
+			const testNewsResults: Array<
+				Pick<NewsRecord, "id"| "site" | "url" | "title">
+			> = [];
+			for (const item of limitedItems) {
+				testNewsResults.push({
+					id: item.guid ?? item.link,
+					site: url,
+					url: item.link,
+					title: item.title || "",
+				});
+			}
+
+			reply.send({ news: testNewsResults });
 		}
-
-		const cachedFeed = await getFeedFromDb(feedUrl);
-
-		if (cachedFeed && cachedFeed.length > 0) {
-			reply.send({
-				feed: cachedFeed as unknown as { [x: string]: unknown }[],
-				source: "db",
-			});
-			return;
-		}
-
-		const feed = await parseFeed(feedUrl);
-		await saveFeedToDb(feedUrl, feed);
-		reply.send({ feed, source: "parsed" });
-	});
+	);
 }

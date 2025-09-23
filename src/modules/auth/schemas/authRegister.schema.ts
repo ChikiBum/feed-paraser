@@ -4,6 +4,7 @@ export const registerSchema = {
     body: {
         type: 'object',
         properties: {
+            userName: { type: 'string', minLength: 3 },
             email: { type: 'string', format: 'email' },
             password: { type: 'string', minLength: 6 },
         },
@@ -14,7 +15,8 @@ export const registerSchema = {
             type: 'object',
             properties: {
                 id: { type: 'string' },
-                email: { type: 'string' }
+                email: { type: 'string' },
+                userName: { type: 'string' }
             }
         }
     }

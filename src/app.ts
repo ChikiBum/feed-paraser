@@ -14,25 +14,6 @@ async function buildApp(options: AppOptions = {}) {
 	const fastify = Fastify({ logger: true });
 	await fastify.register(configPlugin);
 
-	fastify.register(fastifySwagger, {
-		swagger: {
-			info: {
-				title: "API docs",
-				description: "REST API documentation",
-				version: "1.0.0",
-			},
-			tags: [],
-		},
-	});
-
-	fastify.register(fastifySwaggerUi, {
-		routePrefix: "/docs",
-		uiConfig: {
-			docExpansion: "full",
-			deepLinking: false,
-		},
-	});
-
 	try {
 		fastify.decorate("pluginLoaded", (pluginName: string) => {
 			fastify.log.info(`✅ Plugin loaded: ${pluginName}`);
