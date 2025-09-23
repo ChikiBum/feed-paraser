@@ -3,9 +3,11 @@
 	"version": "1.0.0",
 	"main": "index.js",
 	"scripts": {
+		"prisma:generate": "prisma generate",
+		"prisma:generate:watch": "prisma generate --watch",
 		"lint": "biome lint src/",
 		"build": "tsc",
-		"dev": "concurrently -k -p \"[{name}]\" -n \"TypeScript,App\" -c \"yellow.bold,cyan.bold\" \"tsc -w\" \"nodemon\""
+		"dev": "npm run prisma:generate && concurrently -k -p \"[{name}]\" -n \"TypeScript,App\" -c \"yellow.bold,cyan.bold\" \"tsc -w\" \"nodemon\""
 	},
 	"author": "",
 	"license": "ISC",
