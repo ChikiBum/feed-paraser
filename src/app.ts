@@ -1,14 +1,37 @@
 import { join } from "node:path";
 import AutoLoad from "@fastify/autoload";
+import fastifySwagger from "@fastify/swagger";
+import fastifySwaggerUi from "@fastify/swagger-ui";
 import Fastify, { type FastifyServerOptions } from "fastify";
 import configPlugin from "./config";
+import { authRoutes } from "./modules/auth/routes/auth.route";
 import { getFeedDataRoutes } from "./modules/feedParser/routes/feedParser.route";
+import { newsRoutes } from "./modules/news/routes/news.route";
 
 export type AppOptions = Partial<FastifyServerOptions>;
 
 async function buildApp(options: AppOptions = {}) {
 	const fastify = Fastify({ logger: true });
 	await fastify.register(configPlugin);
+
+	fastify.register(fastifySwagger, {
+		swagger: {
+			info: {
+				title: "API docs",
+				description: "REST API documentation",
+				version: "1.0.0",
+			},
+			tags: [],
+		},
+	});
+
+	fastify.register(fastifySwaggerUi, {
+		routePrefix: "/docs",
+		uiConfig: {
+			docExpansion: "full",
+			deepLinking: false,
+		},
+	});
 
 	try {
 		fastify.decorate("pluginLoaded", (pluginName: string) => {
@@ -26,17 +49,13 @@ async function buildApp(options: AppOptions = {}) {
 	} catch (error) {
 		fastify.log.error("Error in autoload:", error);
 		throw error;
+	} finally {
+		fastify.log.info("Finished loading plugins");
 	}
 
-	fastify.get("/", async (_request, _reply) => {
-		return { hello: "worlder" };
-	});
-
-	fastify.get("/health", async () => {
-		return { status: "ok1" };
-	});
-
-	fastify.register(getFeedDataRoutes);
+	fastify.register(getFeedDataRoutes, { prefix: "/feed" });
+	fastify.register(authRoutes);
+	fastify.register(newsRoutes, { prefix: "/news" });
 
 	return fastify;
 }
