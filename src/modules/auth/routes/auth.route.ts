@@ -13,13 +13,25 @@ export async function authRoutes(fastify: FastifyInstance) {
 				password: string;
 			};
 
+			const existingUser = await fastify.prisma.user.findUnique({
+				where: { email },
+			});
+
+			if (existingUser) {
+				return reply.conflict("User already exists");
+			}
 			const hash = await fastify.bcrypt.hash(password);
+
 			const user = await fastify.prisma.user.create({
 				data: { email, username, password: hash },
 			});
-			reply
-				.code(201)
-				.send({ id: user.id, email: user.email, username: user.username });
+
+			if (user) {
+				const token = fastify.jwt.sign({ id: user.id, email: user.email });
+				reply
+					.code(201)
+					.send({ message: "user created", id: user.id, email: user.email, username: user.username, token });
+			}
 		},
 	);
 
@@ -35,4 +47,5 @@ export async function authRoutes(fastify: FastifyInstance) {
 		const token = fastify.jwt.sign({ id: user.id, email: user.email });
 		reply.send({ token });
 	});
+	
 }

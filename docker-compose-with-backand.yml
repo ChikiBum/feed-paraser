@@ -1,6 +1,19 @@
 version: "3.9"
 
 services:
+  backend:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - MONGO_URL=${MONGO_URL}
+    depends_on:
+      - mongo
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+
   mongo:
     image: mongo:latest
     restart: always
@@ -21,3 +34,5 @@ services:
 
 volumes:
   mongo_data:
+
+

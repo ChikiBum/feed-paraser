@@ -16,7 +16,8 @@ export const registerSchema = {
             properties: {
                 id: { type: 'string' },
                 email: { type: 'string' },
-                userName: { type: 'string' }
+                userName: { type: 'string' },
+                token: { type: 'string' },
             }
         }
     }

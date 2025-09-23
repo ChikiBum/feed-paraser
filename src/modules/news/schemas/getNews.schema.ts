@@ -4,25 +4,30 @@ export const getNewsSchema = {
   querystring: {
     type: 'object',
     properties: {
-      userId: { type: 'string' }
-    },
-    required: ['userId'] 
+      email: { type: 'string', format: 'email' },
+      password: { type: 'string' }
+    }
   },
-  response: {
+ response: {
     401: { type: 'object', properties: { message: { type: 'string' } } },
     200: {
-      type: 'array',
-      items: {
-        type: 'object',
-        properties: {
-          id: { type: 'string' },
-          site: { type: 'string' },
-          url: { type: 'string' },
-          parsed: { type: 'boolean' },
-          forced: { type: 'boolean' },
-          userId: { type: 'string', nullable: true },
-          createdAt: { type: 'string', format: 'date-time' },
-          updatedAt: { type: 'string', format: 'date-time' }
+      type: 'object',
+      properties: {
+        news: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              id: { type: 'string' },
+              site: { type: 'string' },
+              url: { type: 'string' },
+              parsed: { type: 'boolean' },
+              forced: { type: 'boolean' },
+              userId: { type: 'string', nullable: true },
+              createdAt: { type: 'string', format: 'date-time' },
+              updatedAt: { type: 'string', format: 'date-time' }
+            }
+          }
         }
       }
     }

@@ -1,7 +1,5 @@
 import { join } from "node:path";
 import AutoLoad from "@fastify/autoload";
-import fastifySwagger from "@fastify/swagger";
-import fastifySwaggerUi from "@fastify/swagger-ui";
 import Fastify, { type FastifyServerOptions } from "fastify";
 import configPlugin from "./config";
 import { authRoutes } from "./modules/auth/routes/auth.route";
@@ -35,7 +33,7 @@ async function buildApp(options: AppOptions = {}) {
 	}
 
 	fastify.register(getFeedDataRoutes, { prefix: "/feed" });
-	fastify.register(authRoutes);
+	fastify.register(authRoutes, { prefix: "/auth" });
 	fastify.register(newsRoutes, { prefix: "/news" });
 
 	return fastify;
