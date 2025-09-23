@@ -30,7 +30,7 @@ export async function authRoutes(fastify: FastifyInstance) {
 		};
 		const user = await fastify.prisma.user.findUnique({ where: { email } });
 		if (!user || !(await fastify.bcrypt.compare(password, user.password))) {
-			return reply.code(401).send({ message: "Invalid credentials" });
+			return reply.unauthorized("Invalid email or password");
 		}
 		const token = fastify.jwt.sign({ id: user.id, email: user.email });
 		reply.send({ token });

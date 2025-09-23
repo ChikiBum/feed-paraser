@@ -12,35 +12,45 @@ export async function newsRoutes(fastify: FastifyInstance) {
 		"/all",
 		{ preValidation: [fastify.authenticate], schema: getNewsSchema },
 		async (_request, reply) => {
-			const userId = getUserId(_request);
+			try {
+				const userId = getUserId(_request);
 
-			const newsArr = await getAllNewsByUser(fastify, userId);
-			const serializedNewsArr = newsArr.map((news) => ({
-				...news,
-				createdAt:
-					news.createdAt instanceof Date
-						? news.createdAt.toISOString()
-						: news.createdAt,
-				updatedAt:
-					news.updatedAt instanceof Date
-						? news.updatedAt.toISOString()
-						: news.updatedAt,
-			}));
-			reply.send(serializedNewsArr);
-		},
+				const newsArr = await getAllNewsByUser(fastify, userId);
+				const serializedNewsArr = newsArr.map((news) => ({
+					...news,
+					createdAt:
+						news.createdAt instanceof Date
+							? news.createdAt.toISOString()
+							: news.createdAt,
+					updatedAt:
+						news.updatedAt instanceof Date
+							? news.updatedAt.toISOString()
+							: news.updatedAt,
+				}));
+				reply.send(serializedNewsArr);
+			} catch (error) {
+				fastify.log.error("Error fetching news:", error);
+				reply.internalServerError("Could not fetch news");
+			}
+		}
 	);
 
 	route.get(
 		"/:id",
 		{ preValidation: [fastify.authenticate], schema: getNewsByIdSchema },
 		async (request, reply) => {
-			const { id } = request.params as { id: string };
-			const news = await getNewsById(fastify, id);
-			if (!news) {
-				reply.code(404).send({ message: "Новина не знайдена" });
-			} else {
-				reply.send(news);
+			try {
+				const { id } = request.params as { id: string };
+				const news = await getNewsById(fastify, id);
+				if (!news) {
+					reply.notFound("News not found");
+				} else {
+					reply.send(news);
+				}
+			} catch (error) {
+				fastify.log.error("Error fetching news by ID:", error);
+				reply.internalServerError("Could not fetch news by ID");
 			}
-		},
+		}
 	);
 }

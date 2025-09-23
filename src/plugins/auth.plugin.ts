@@ -17,13 +17,12 @@ const authPlugin: FastifyPluginAsync = async (fastify) => {
     try {
       await request.jwtVerify();
       if (!request.user) {
-        reply.code(401).send({ message: 'Unauthorized: User ID not found' });
+        reply.unauthorized("User ID not found");
       }
     } catch {
-      reply.code(401).send({ message: 'Unauthorized' });
+      reply.unauthorized("Invalid or missing token");
     }
   });
-
-};
+}
 
 export default fp(authPlugin);

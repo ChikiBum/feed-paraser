@@ -22,19 +22,24 @@ export async function getAllNewsByUser(fastify: FastifyInstance, userId: string)
 }
 
 export async function getNewsById(fastify: FastifyInstance, id: string) {
-	const news = await fastify.prisma.news.findUnique({
-		where: { id },
-		include: { user: true },
-	});
-	if (!news) return null;
-	return {
-		id: news.id,
-		site: news.site,
-		url: news.url,
-		parsed: news.parsed,
-		forced: news.forced,
-		userId: news.user?.id ?? null,
-		createdAt: news.createdAt,
-		updatedAt: news.updatedAt,
-	};
+  try {
+    const news = await fastify.prisma.news.findUnique({
+      where: { id },
+      include: { user: true },
+    });
+    if (!news) return null;
+    return {
+      id: news.id,
+      site: news.site,
+      url: news.url,
+      parsed: news.parsed,
+      forced: news.forced,
+      userId: news.user?.id ?? null,
+      createdAt: news.createdAt,
+      updatedAt: news.updatedAt,
+    };
+  } catch (error) {
+    fastify.log.error("Error fetching news by ID:", error);
+    throw error;
+  }
 }
