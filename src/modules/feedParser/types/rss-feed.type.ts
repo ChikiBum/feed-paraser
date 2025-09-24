@@ -47,3 +47,5 @@ export interface NewsRecord {
   userId?: string;
   siteId?: string;
 }
+
+export type SiteShort = Pick<SiteRecord, "id" | "feed">;
