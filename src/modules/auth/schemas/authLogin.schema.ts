@@ -13,7 +13,10 @@ export const loginSchema = {
     200: {
       type: 'object',
       properties: {
-        token: { type: 'string' }
+        id: { type: 'string' },
+        email: { type: 'string' },
+        userName: { type: 'string' },
+        token: { type: 'string' },
       }
     },
     401: {

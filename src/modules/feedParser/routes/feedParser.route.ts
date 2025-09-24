@@ -55,22 +55,32 @@ export async function getFeedDataRoutes(fastify: FastifyInstance) {
       }
 
       let siteRecord: SiteShort | null;
+     
       try {
         siteRecord = await fastify.prisma.site.findUnique({
           where: { feed_userId: { feed: url, userId: userId } },
           select: { id: true, feed: true },
         });
 
-        if (!siteRecord) {
+
+        if (!siteRecord) {  
+          await fastify.prisma.site.deleteMany({
+            where: { userId: userId },
+          });
+          await fastify.prisma.news.deleteMany({
+            where: { userId: userId },
+        });
           const created = await fastify.prisma.site.create({
             data: { feed: url, userId: userId },
           });
           siteRecord = { id: created.id, feed: created.feed };
-        }
-
-        await fastify.prisma.news.deleteMany({
+        } else {
+          await fastify.prisma.news.deleteMany({
           where: { siteId: siteRecord.id },
         });
+        }
+
+        
       } catch (error) {
         fastify.log.error("Error deleting existing news:", error);
       }
