@@ -44,8 +44,12 @@ export async function authRoutes(fastify: FastifyInstance) {
 		if (!user || !(await fastify.bcrypt.compare(password, user.password))) {
 			return reply.unauthorized("Invalid email or password");
 		}
-		const token = fastify.jwt.sign({ id: user.id, email: user.email });
-		reply.send({ token });
+		if (user) {
+				const token = fastify.jwt.sign({ id: user.id, email: user.email });
+				reply
+					.code(200)
+					.send({ message: "user logged in", id: user.id, email: user.email, username: user.username, token });
+			}
 	});
 	
 }

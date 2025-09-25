@@ -19,7 +19,10 @@ export const getNewsByIdSchema = {
         forced: { type: 'boolean' },
         userId: { type: 'string', nullable: true },
         createdAt: { type: 'string', format: 'date-time' },
-        updatedAt: { type: 'string', format: 'date-time' }
+        updatedAt: { type: 'string', format: 'date-time' },
+        parsedH1: { type: 'string', nullable: true },
+        parsedImg: { type: 'string', nullable: true },
+        parsedText: { type: 'string', nullable: true }
       }
     },
     404: {
