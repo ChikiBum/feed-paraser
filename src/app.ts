@@ -4,6 +4,7 @@ import Fastify, { type FastifyServerOptions } from "fastify";
 import configPlugin from "./config";
 import { authRoutes } from "./modules/auth/routes/auth.route";
 import { getFeedDataRoutes } from "./modules/feedParser/routes/feedParser.route";
+import { createScheduledFeedJob } from "./modules/feedParser/services/feedScheduler.service";
 import { newsRoutes } from "./modules/news/routes/news.route";
 
 export type AppOptions = Partial<FastifyServerOptions>;
@@ -35,6 +36,17 @@ async function buildApp(options: AppOptions = {}) {
 	fastify.register(getFeedDataRoutes, { prefix: "/feed" });
 	fastify.register(authRoutes, { prefix: "/auth" });
 	fastify.register(newsRoutes, { prefix: "/news" });
+
+	fastify.ready().then(() => {
+		const feedJob = createScheduledFeedJob(
+			fastify,
+			process.env.SCHEDULER_TIMEOUT
+				? Number(process.env.SCHEDULER_TIMEOUT)
+				: undefined,
+		);
+		fastify.scheduler.addSimpleIntervalJob(feedJob);
+		fastify.log.info("📅 RSS Feed scheduler started (runs every 5 minutes)");
+	});
 
 	return fastify;
 }
