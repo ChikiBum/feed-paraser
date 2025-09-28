@@ -5,14 +5,13 @@ services:
     build: .
     ports:
       - "3000:3000"
-    environment:
-      - MONGO_URL=${MONGO_URL}
     depends_on:
       - mongo
     volumes:
       - .:/app
     env_file:
       - .env
+    command: sh -c "npx prisma generate && npm start"
 
   mongo:
     image: mongo:latest
@@ -25,7 +24,7 @@ services:
       - MONGO_INITDB_DATABASE=news-app-prod
     command: ["--replSet", "rs0", "--bind_ip_all"]
     healthcheck:
-      test: echo "try { rs.status() } catch (err) { rs.initiate({_id:'rs0',members:[{_id:0,host:'localhost:27017'}]}) }" | mongosh --port 27017 --quiet
+      test: echo "try { rs.status() } catch (err) { rs.initiate({_id:'rs0',members:[{_id:0,host:'mongo:27017'}]}) }" | mongosh --port 27017 --quiet
       interval: 5s
       timeout: 30s
       start_period: 0s

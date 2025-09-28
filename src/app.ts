@@ -45,7 +45,7 @@ async function buildApp(options: AppOptions = {}) {
 				: undefined,
 		);
 		fastify.scheduler.addSimpleIntervalJob(feedJob);
-		fastify.log.info("📅 RSS Feed scheduler started (runs every 5 minutes)");
+		fastify.log.info("📅 RSS Feed scheduler started (runs every minutes)");
 	});
 
 	return fastify;
