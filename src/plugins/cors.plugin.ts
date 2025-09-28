@@ -4,7 +4,7 @@ import fp from "fastify-plugin";
 
 const corsPlugin: FastifyPluginAsync = async (fastify) => {
 	await fastify.register(cors, {
-		origin: "http://localhost:5173", // Adjust this to your frontend URL
+		origin: "http://localhost:5173",
 		methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
 		credentials: true,
 	});
