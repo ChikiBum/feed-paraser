@@ -1,9 +1,14 @@
 import * as cheerio from "cheerio";
 import type { FastifyInstance } from "fastify";
+import { deleteNewsByIdSchema } from "../schemas/deleteNewsByIdSchema";
 import { getNewsSchema } from "../schemas/getNews.schema";
 import { getNewsByIdSchema } from "../schemas/getNewsById.schema";
 import getUserId from "../service/guard.service";
-import { getAllNewsByUser, getNewsById } from "../service/news.service";
+import {
+	deleteNewsById,
+	getAllNewsByUser,
+	getNewsById,
+} from "../service/news.service";
 import type { News, SerializedNews } from "../types/news.type";
 
 export async function newsRoutes(fastify: FastifyInstance) {
@@ -60,13 +65,12 @@ export async function newsRoutes(fastify: FastifyInstance) {
 						const res = await fetch(news.url);
 						const html = await res.text();
 						const $ = cheerio.load(html);
-					
+
 						if (h1Selector) parsedH1 = $(h1Selector).first().text().trim();
 						if (imgSelector)
 							parsedImg = $(imgSelector).first().attr("data-src") || null;
-					
-						if (textSelector)
-							parsedText = $(textSelector).text().trim();
+
+						if (textSelector) parsedText = $(textSelector).text().trim();
 					} catch (err) {
 						fastify.log.error("Cheerio parse error:", err);
 					}
@@ -81,6 +85,28 @@ export async function newsRoutes(fastify: FastifyInstance) {
 			} catch (error) {
 				fastify.log.error("Error fetching news by ID:", error);
 				reply.internalServerError("Could not fetch news by ID");
+			}
+		},
+	);
+
+	fastify.delete(
+		"/:id",
+		{
+			preValidation: [fastify.authenticate],
+			schema: deleteNewsByIdSchema,
+		},
+		async (request, reply) => {
+			try {
+				const { id } = request.params as { id: string };
+				const deleted = await deleteNewsById(fastify, id);
+				if (deleted) {
+					reply.send({ success: true, message: "News deleted" });
+				} else {
+					reply.notFound("News not found or could not be deleted");
+				}
+			} catch (error) {
+				fastify.log.error("Error deleting news by ID:", error);
+				reply.internalServerError("Could not delete news");
 			}
 		},
 	);
