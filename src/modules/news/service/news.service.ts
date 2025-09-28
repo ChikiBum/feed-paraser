@@ -47,3 +47,13 @@ export async function getNewsById(fastify: FastifyInstance, id: string) {
 		throw error;
 	}
 }
+
+export async function deleteNewsById(fastify: FastifyInstance, id: string) {
+	try {
+		await fastify.prisma.news.delete({ where: { id } });
+		return true;
+	} catch (error) {
+		fastify.log.error("Error deleting news:", error);
+		return false;
+	}
+}
