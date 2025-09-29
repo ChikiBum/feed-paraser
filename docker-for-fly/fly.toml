@@ -1,0 +1,27 @@
+app = "news-app-mongo"
+primary_region = "fra"
+
+[mounts]
+  source = "mongo_data"
+  destination = "/data/db"
+
+[env]
+  MONGO_INITDB_DATABASE = "news-app-prod"
+
+[[services]]
+  internal_port = 27017
+  protocol = "tcp"
+  [[services.ports]]
+    port = 27017
+
+[checks]
+  [checks.mongo]
+    type = "tcp"
+    interval = "5s"
+    timeout = "30s"
+    port = 27017
+
+[[vm]]
+  memory = "1gb"
+  cpu_kind = "shared"
+  cpus = 1
