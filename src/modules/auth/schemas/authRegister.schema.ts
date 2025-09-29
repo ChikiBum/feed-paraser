@@ -2,11 +2,11 @@ export const registerSchema = {
 	tags: ["auth"],
 	summary: "Register a new user",
 	description: `Create new user account. Example request: POST http://127.0.0.1:3000/auth/register
-    Body example: { "userName": "johndoe", "email": "user@example.com", "password": "password123" }`,
+    Body example: { "username": "johndoe", "email": "user@example.com", "password": "password123" }`,
 	body: {
 		type: "object",
 		properties: {
-			userName: {
+			username: {
 				type: "string",
 				minLength: 3,
 				description: "User display name (optional, minimum 3 characters)",
@@ -46,7 +46,7 @@ export const registerSchema = {
 					type: "string",
 					examples: ["user@example.com"],
 				},
-				userName: {
+				username: {
 					type: "string",
 					examples: ["johndoe"],
 				},
@@ -59,7 +59,7 @@ export const registerSchema = {
 				{
 					id: "68d9151a1078a9a131ad3914",
 					email: "user@example.com",
-					userName: "johndoe",
+					username: "johndoe",
 					token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
 				},
 			],

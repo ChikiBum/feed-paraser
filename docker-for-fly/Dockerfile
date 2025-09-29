@@ -1,0 +1,2 @@
+FROM mongo:latest
+CMD ["mongod", "--replSet", "rs0", "--bind_ip_all"]
