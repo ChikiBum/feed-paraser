@@ -9,9 +9,7 @@ import {
 	uploadErrorSchema,
 	uploadSuccessSchema,
 } from "../schemas/upload.schema";
-import type { CreativeFile, FormData, LineItem } from "../types/ssr.type";
-
-const lineItems: LineItem[] = [];
+import type { CreativeFile, FormData } from "../types/ssr.type";
 
 function generateUniqueFilename(originalFilename: string): string {
 	const timestamp = Date.now();
@@ -127,7 +125,7 @@ export async function ssrRoute(fastify: FastifyInstance) {
                                     const result = await response.json();
                                     
                                     if (response.ok && result.success) {
-                                        showMessage(\`✅ \${result.message} (Total line items: \${result.lineItemsCount})\`, 'success');
+                                        showMessage(\`✅ \${result.message} (Total creatives: \${result.lineItemsCount}, ID: \${result.creativeId})\`, 'success');
                                         
                                         resetFormToDefaults();
                                     } else {
@@ -148,6 +146,48 @@ export async function ssrRoute(fastify: FastifyInstance) {
             </html>
         `);
 	});
+
+	fastify.get(
+		"/creatives",
+		{
+			preValidation: [fastify.authenticate],
+		},
+		async (request: FastifyRequest, reply: FastifyReply) => {
+			try {
+				const user = request.user as {
+					id: string;
+					email: string;
+					userName?: string;
+				};
+
+				const creatives = await fastify.prisma.creative.findMany({
+					where: {
+						userId: user.id,
+					},
+					orderBy: {
+						createdAt: "desc",
+					},
+				});
+
+				reply.status(200).send({
+					success: true,
+					creatives: creatives,
+					count: creatives.length,
+					user: {
+						id: user.id,
+						email: user.email,
+						userName: user.userName,
+					},
+				});
+			} catch (error) {
+				console.error("❌ Error fetching creatives:", error);
+				reply.status(500).send({
+					error: "Failed to fetch creatives",
+					statusCode: 500,
+				});
+			}
+		},
+	);
 
 	fastify.post(
 		"/upload",
@@ -259,24 +299,43 @@ export async function ssrRoute(fastify: FastifyInstance) {
 					size: creativeFile.size,
 				});
 
-				lineItems.push({
-					user_id: user.id,
-					size: formData.size,
-					min_cpm: formData.min_cpm,
-					max_cpm: formData.max_cpm,
-					geo: formData.geo,
-					ad_type: formData.ad_type as LineItem["ad_type"],
-					frequency: formData.frequency,
-					creative_filename: creativeFile.filename,
-					creative_path: `creatives/${user.id}/${creativeFile.filename}`,
+				// Save creative data to MongoDB
+				const createdCreative = await fastify.prisma.creative.create({
+					data: {
+						size: formData.size,
+						minCpm: formData.min_cpm,
+						maxCpm: formData.max_cpm,
+						geo: formData.geo,
+						adType: formData.ad_type,
+						frequency: formData.frequency,
+						creativeFilename: creativeFile.filename,
+						creativePath: `creatives/${user.id}/${creativeFile.filename}`,
+						originalFilename: originalFilename,
+						mimetype: creativeFile.mimetype,
+						fileSize: creativeFile.size,
+						userId: user.id,
+					},
 				});
 
-				if (lineItems.length > 5) lineItems.shift();
+				// Get total count of user's creatives
+				const creativesCount = await fastify.prisma.creative.count({
+					where: {
+						userId: user.id,
+					},
+				});
+
+				console.log("✅ Creative saved to MongoDB:", {
+					id: createdCreative.id,
+					userId: user.id,
+					filename: createdCreative.creativeFilename,
+					createdAt: createdCreative.createdAt,
+				});
 
 				reply.status(200).send({
 					success: true,
 					message: "Creative successfully created!",
-					lineItemsCount: lineItems.length,
+					lineItemsCount: creativesCount,
+					creativeId: createdCreative.id,
 					user: {
 						id: user.id,
 						email: user.email,

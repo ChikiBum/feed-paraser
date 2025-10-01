@@ -13,6 +13,10 @@ export const uploadSuccessSchema = {
 			type: "number",
 			minimum: 0,
 		},
+		creativeId: {
+			type: "string",
+			minLength: 1,
+		},
 		user: {
 			type: "object",
 			properties: {
@@ -32,7 +36,7 @@ export const uploadSuccessSchema = {
 			additionalProperties: false,
 		},
 	},
-	required: ["success", "message", "lineItemsCount", "user"],
+	required: ["success", "message", "lineItemsCount", "creativeId", "user"],
 	additionalProperties: false,
 } as const;
 
