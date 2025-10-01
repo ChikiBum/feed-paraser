@@ -55,21 +55,38 @@ model Site {
 }
 
 model Creative {
-  id                String   @id @default(auto()) @map("_id") @db.ObjectId
-  size              String
-  minCpm            String   @map("min_cpm")
-  maxCpm            String   @map("max_cpm")
-  geo               String
-  adType            String   @map("ad_type")
-  frequency         String
-  creativeFilename  String   @map("creative_filename") 
-  creativePath      String   @map("creative_path")
-  originalFilename  String   @map("original_filename") 
-  mimetype          String   
-  fileSize          Int      @map("file_size") 
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  id               String   @id @default(auto()) @map("_id") @db.ObjectId
+  size             String
+  minCpm           String   @map("min_cpm")
+  maxCpm           String   @map("max_cpm")
+  geo              String
+  adType           String   @map("ad_type")
+  frequency        String
+  creativeFilename String   @map("creative_filename")
+  creativePath     String   @map("creative_path")
+  originalFilename String   @map("original_filename")
+  mimetype         String
+  fileSize         Int      @map("file_size")
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 
   user   User   @relation(fields: [userId], references: [id], name: "UserCreatives")
   userId String @map("user_id") @db.ObjectId
+}
+
+model AnonymousUser {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  anonId    String   @unique
+  createdAt DateTime @default(now())
+  events    Event[]
+}
+
+model Event {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  anonId    String
+  type      String
+  adId      String?
+  createdAt DateTime @default(now())
+
+  user AnonymousUser @relation(fields: [anonId], references: [anonId])
 }
