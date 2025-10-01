@@ -26,7 +26,7 @@ export async function ssrRoute(fastify: FastifyInstance) {
 			React.createElement(CreativeForm),
 		);
 
-		const apiBaseUrl = fastify.config.API_BASE_URL || 'http://localhost:3000';
+		const apiBaseUrl = fastify.config.API_BASE_URL || "http://localhost:3000";
 
 		reply.type("text/html; charset=utf-8").send(`
             <!DOCTYPE html>
@@ -133,7 +133,7 @@ export async function ssrRoute(fastify: FastifyInstance) {
                                         
                                         resetFormToDefaults();
                                     } else {
-                                        						throw new Error(result.error || 'Upload error');
+                                        throw new Error(result.error || 'Upload error');
                                     }
                                     
                                 } catch (error) {

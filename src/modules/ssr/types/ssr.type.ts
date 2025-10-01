@@ -36,6 +36,7 @@ export interface UploadSuccess {
 	success: true;
 	message: string;
 	lineItemsCount: number;
+	creativeId: string;
 	user: {
 		id: string;
 		email: string;
