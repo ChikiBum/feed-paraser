@@ -26,6 +26,9 @@ export async function ssrRoute(fastify: FastifyInstance) {
 			React.createElement(CreativeForm),
 		);
 
+		// Get API base URL from config
+		const apiBaseUrl = fastify.config.API_BASE_URL || 'http://localhost:3000';
+
 		reply.type("text/html; charset=utf-8").send(`
             <!DOCTYPE html>
             <html lang="ru">
@@ -38,6 +41,9 @@ export async function ssrRoute(fastify: FastifyInstance) {
                 <body class="bg-gray-100 font-sans">
                     <div id="root">${html}</div>
                     <script>
+                        // API configuration for SSR
+                        const API_BASE_URL = '${apiBaseUrl}';
+                        
                         document.addEventListener('DOMContentLoaded', function() {
                             const form = document.querySelector('.creative-form');
                             const messageContainer = document.querySelector('.message-container');
@@ -115,7 +121,7 @@ export async function ssrRoute(fastify: FastifyInstance) {
                                         console.warn('📋 Please authenticate first via /auth/login');
                                     }
                                     
-                                    const response = await fetch('/ssr/upload', {
+                                    const response = await fetch(API_BASE_URL + '/ssr/upload', {
                                         method: 'POST',
                                         headers: headers,
                                         body: formData,
