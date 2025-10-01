@@ -26,7 +26,6 @@ export async function ssrRoute(fastify: FastifyInstance) {
 			React.createElement(CreativeForm),
 		);
 
-		// Get API base URL from config
 		const apiBaseUrl = fastify.config.API_BASE_URL || 'http://localhost:3000';
 
 		reply.type("text/html; charset=utf-8").send(`
@@ -41,7 +40,6 @@ export async function ssrRoute(fastify: FastifyInstance) {
                 <body class="bg-gray-100 font-sans">
                     <div id="root">${html}</div>
                     <script>
-                        // API configuration for SSR
                         const API_BASE_URL = '${apiBaseUrl}';
                         
                         document.addEventListener('DOMContentLoaded', function() {
@@ -305,7 +303,6 @@ export async function ssrRoute(fastify: FastifyInstance) {
 					size: creativeFile.size,
 				});
 
-				// Save creative data to MongoDB
 				const createdCreative = await fastify.prisma.creative.create({
 					data: {
 						size: formData.size,
@@ -323,7 +320,6 @@ export async function ssrRoute(fastify: FastifyInstance) {
 					},
 				});
 
-				// Get total count of user's creatives
 				const creativesCount = await fastify.prisma.creative.count({
 					where: {
 						userId: user.id,
