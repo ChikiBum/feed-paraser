@@ -9,14 +9,15 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  username  String   @unique
-  email     String   @unique
+  id        String     @id @default(auto()) @map("_id") @db.ObjectId
+  username  String     @unique
+  email     String     @unique
   password  String
-  news      News[]   @relation("UserNews")
-  sites     Site[]   @relation("UserSites")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  news      News[]     @relation("UserNews")
+  sites     Site[]     @relation("UserSites")
+  creatives Creative[] @relation("UserCreatives")
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
 }
 
 model News {
@@ -51,4 +52,24 @@ model Site {
   userId    String?  @map("user_id") @db.ObjectId
 
   @@unique([feed, userId], name: "feed_userId")
+}
+
+model Creative {
+  id                String   @id @default(auto()) @map("_id") @db.ObjectId
+  size              String
+  minCpm            String   @map("min_cpm")
+  maxCpm            String   @map("max_cpm")
+  geo               String
+  adType            String   @map("ad_type")
+  frequency         String
+  creativeFilename  String   @map("creative_filename") 
+  creativePath      String   @map("creative_path")
+  originalFilename  String   @map("original_filename") 
+  mimetype          String   
+  fileSize          Int      @map("file_size") 
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  user   User   @relation(fields: [userId], references: [id], name: "UserCreatives")
+  userId String @map("user_id") @db.ObjectId
 }

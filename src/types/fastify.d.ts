@@ -1,8 +1,8 @@
 import type { PrismaClient } from "@prisma/client";
 import type { FastifyReply, FastifyRequest } from "fastify";
+import type { ToadScheduler } from "toad-scheduler";
 import type { Config } from "../config/schema";
 import type { JWTPayload } from "../modules/auth/types";
-import type { ToadScheduler } from "toad-scheduler";
 
 declare module "fastify" {
 	interface FastifyInstance {
