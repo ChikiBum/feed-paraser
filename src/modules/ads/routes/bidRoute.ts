@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
+import { bidSchema } from "../schemas/bid.schema";
 import {
 	applyFilters,
 	filterByAnonId,
@@ -7,35 +8,29 @@ import {
 	filterByGeo,
 	filterBySize,
 } from "../services/creativeFilter";
-import { type BidRequest, BidResponse } from "../types/ads.type";
+import type { BidRequest } from "../types/ads.type";
 
 const prisma = new PrismaClient();
 
 export default async function bidRoute(fastify: FastifyInstance) {
 	fastify.post(
 		"/bid",
+		{
+			schema: bidSchema,
+		},
 		async (
 			request: FastifyRequest<{ Body: BidRequest }>,
 			reply: FastifyReply,
 		) => {
-			let req: BidRequest;
-			if (typeof request.body === "string") {
-				try {
-					req = JSON.parse(request.body);
-				} catch (err) {
-					console.error("JSON parse error:", err);
-					return reply.status(400).send({ error: "Invalid JSON" });
-				}
-			} else {
-				req = request.body;
-			}
+			const req = request.body;
+
 			const allCreatives = await prisma.creative.findMany();
 
 			const pipeline = [
 				filterBySize,
 				filterByGeo,
 				filterByBidfloor,
-				filterByAnonId,
+				// filterByAnonId,
 			];
 
 			const filtered = await applyFilters(allCreatives, req, pipeline);
@@ -56,14 +51,15 @@ export default async function bidRoute(fastify: FastifyInstance) {
 			});
 
 			return reply.send({
-				requestId: req.adUnitCode,
+				requestId: req.bidId,
+				adUnitCode: req.adUnitCode,
 				creativeId: creative.id,
 				adType: creative.adType,
 				width: w,
 				height: h,
 				cpm: Number(creative.minCpm),
 				creativeUrl: `/${creative.creativePath}`,
-				adContent: `<img src='/${creative.creativePath}' style="width:${w}px;height:${h}px"/>`,
+				adContent: `<img src='${process.env.API_BASE_URL}/${creative.creativePath}' style="width:${w}px;height:${h}px"/>`,
 				currency: "USD",
 				ttl: 300,
 			});

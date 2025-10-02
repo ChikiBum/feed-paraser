@@ -3,6 +3,7 @@ import AutoLoad from "@fastify/autoload";
 import Fastify, { type FastifyServerOptions } from "fastify";
 import configPlugin from "./config";
 import bidRoute from "./modules/ads/routes/bidRoute";
+import analyticsRoute from "./modules/adsAnalitycs/routes/analitycsRoutes";
 import { authRoutes } from "./modules/auth/routes/auth.route";
 import { getFeedDataRoutes } from "./modules/feedParser/routes/feedParser.route";
 import { createScheduledFeedJob } from "./modules/feedParser/services/feedScheduler.service";
@@ -14,6 +15,21 @@ export type AppOptions = Partial<FastifyServerOptions>;
 async function buildApp(options: AppOptions = {}) {
 	const fastify = Fastify({ logger: true });
 	await fastify.register(configPlugin);
+
+	fastify.addContentTypeParser(
+		"text/plain",
+		{ parseAs: "string" },
+		(_req, body, done) => {
+			try {
+				const bodyString = typeof body === "string" ? body : body.toString();
+				const json = JSON.parse(bodyString);
+				done(null, json);
+			} catch (err) {
+				err.statusCode = 400;
+				done(err, undefined);
+			}
+		},
+	);
 
 	try {
 		fastify.decorate("pluginLoaded", (pluginName: string) => {
@@ -45,6 +61,7 @@ async function buildApp(options: AppOptions = {}) {
 	fastify.register(newsRoutes, { prefix: "/news" });
 	fastify.register(ssrRoute, { prefix: "/ssr" });
 	fastify.register(bidRoute, { prefix: "/ads" });
+	fastify.register(analyticsRoute, { prefix: "/ads" });
 
 	fastify.ready().then(() => {
 		const feedJob = createScheduledFeedJob(

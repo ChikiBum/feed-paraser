@@ -1,6 +1,7 @@
 import { type Creative, Event } from "@prisma/client";
 
 export type BidRequest = {
+	bidId: string;
 	anonId: string;
 	adUnitCode: string;
 	sizes: [number, number][];

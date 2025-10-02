@@ -32,11 +32,15 @@ const prisma = new PrismaClient();
 
 export const filterByAnonId: CreativeFilter = async (creatives, req) => {
 	console.log("filterByAnonId ", filterByAnonId);
+	const oneHourAgo = new Date();
+  oneHourAgo.setHours(oneHourAgo.getHours() - 1);
+
 	const events = await prisma.event.findMany({
 		where: {
 			anonId: req.anonId,
 			type: "impression",
 			adId: { in: creatives.map((c) => c.id) },
+			createdAt: { gte: oneHourAgo }
 		},
 		select: { adId: true },
 	});
