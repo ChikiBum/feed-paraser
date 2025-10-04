@@ -1,21 +1,11 @@
+import { EVENT_TYPES } from "../types/analitycs.type";
 export const eventSchema = {
 	params: {
 		type: "object",
 		properties: {
 			type: {
 				type: "string",
-				enum: [
-					"click",
-					"close",
-					"impression",
-					"load_page",
-					"load_ad_module",
-					"auctionInit",
-					"auctionEnd",
-					"bidRequested",
-					"bidResponse",
-					"bidWon",
-				],
+				enum: EVENT_TYPES,
 			},
 		},
 		required: ["type"],
