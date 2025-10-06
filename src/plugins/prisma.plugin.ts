@@ -4,24 +4,23 @@ import fp from "fastify-plugin";
 const pluginName = "prisma-plugin";
 
 export default fp(
-  async (fastify) => {
-    const prisma = new PrismaClient();
+	async (fastify) => {
+		const prisma = new PrismaClient();
 
-    fastify.decorate("prisma", prisma);
+		fastify.decorate("prisma", prisma);
 
-    fastify.addHook("onClose", async (instance) => {
-      try {
-        await instance.prisma.$disconnect();
-      } catch (err) {
-        fastify.log.error("Error while closing Prisma:", err);
-        throw err;
-      }
-    });
+		fastify.addHook("onClose", async (instance) => {
+			try {
+				await instance.prisma.$disconnect();
+			} catch (err) {
+				fastify.log.error("Error while closing Prisma:", err);
+				throw err;
+			}
+		});
 
-    fastify.pluginLoaded(pluginName);
-  },
-  {
-    name: pluginName,
-  }
+		fastify.pluginLoaded(pluginName);
+	},
+	{
+		name: pluginName,
+	},
 );
-
