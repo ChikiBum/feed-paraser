@@ -27,39 +27,20 @@ export async function eventGridDataRoute(fastify: FastifyInstance) {
 			if (filters.type) where.type = filters.type;
 			if (filters.adId) where.adId = filters.adId;
 			if (filters.anonId) where.anonId = filters.anonId;
-			// if (filters.dateFrom || filters.dateTo) {
-			// 	where.createdAt = {};
-			// 	if (filters.dateFrom) where.createdAt.gte = new Date(filters.dateFrom);
-			// 	if (filters.dateTo) where.createdAt.lte = new Date(filters.dateTo);
-			// }
 
 			if (filters.createdAt) {
 				const filterDate = new Date(filters.createdAt);
 
-				// Початок дня (00:00:00)
 				const startOfDay = new Date(filterDate);
 				startOfDay.setHours(0, 0, 0, 0);
 
-				// Кінець дня (23:59:59.999)
 				const endOfDay = new Date(filterDate);
 				endOfDay.setHours(23, 59, 59, 999);
 
 				where.createdAt = {
-					gte: startOfDay, // >= початок дня
-					lte: endOfDay, // <= кінець дня
+					gte: startOfDay,
+					lte: endOfDay,
 				};
-			}
-
-			// Зберігаємо існуючу логіку для dateFrom/dateTo
-			if (filters.dateFrom || filters.dateTo) {
-				where.createdAt = {};
-				if (filters.dateFrom) where.createdAt.gte = new Date(filters.dateFrom);
-				if (filters.dateTo) {
-					const dateTo = new Date(filters.dateTo);
-					// ✅ ДОДАЄМО завтрашню дату
-					dateTo.setDate(dateTo.getDate() + 1);
-					where.createdAt.lte = dateTo;
-				}
 			}
 
 			const total = await fastify.prisma.event.count({ where });

@@ -15,13 +15,11 @@ export const filterBySize: CreativeFilter = async (creatives, req) => {
 };
 
 export const filterByGeo: CreativeFilter = async (creatives, req) => {
-	console.log("filterByGeo ", filterByGeo);
 	if (!req.geo) return creatives;
 	return creatives.filter((cr) => cr.geo === req.geo);
 };
 
 export const filterByBidfloor: CreativeFilter = async (creatives, req) => {
-	console.log("filterByBidfloor ", filterByBidfloor);
 	if (!req.bidfloor) return creatives;
 	return creatives.filter(
 		(cr) => req.bidfloor !== undefined && Number(cr.minCpm) >= req.bidfloor,
@@ -31,7 +29,6 @@ export const filterByBidfloor: CreativeFilter = async (creatives, req) => {
 const prisma = new PrismaClient();
 
 export const filterByAnonId: CreativeFilter = async (creatives, req) => {
-	console.log("filterByAnonId ", filterByAnonId);
 	const oneHourAgo = new Date();
   oneHourAgo.setHours(oneHourAgo.getHours() - 1);
 
@@ -45,7 +42,6 @@ export const filterByAnonId: CreativeFilter = async (creatives, req) => {
 		select: { adId: true },
 	});
 	const shownAdIds = new Set(events.map((e) => e.adId));
-	console.log("shownAdIds in filterByAnonId", shownAdIds);
 	return creatives.filter((cr) => !shownAdIds.has(cr.id));
 };
 
