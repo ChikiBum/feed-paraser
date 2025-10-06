@@ -1,4 +1,4 @@
-import { join } from "node:path";
+import path, { join } from "node:path";
 import AutoLoad from "@fastify/autoload";
 import Fastify, { type FastifyServerOptions } from "fastify";
 import configPlugin from "./config";
@@ -6,8 +6,11 @@ import { authRoutes } from "./modules/auth/routes/auth.route";
 import { getFeedDataRoutes } from "./modules/feedParser/routes/feedParser.route";
 import { createScheduledFeedJob } from "./modules/feedParser/services/feedScheduler.service";
 import { newsRoutes } from "./modules/news/routes/news.route";
+import { ssrRoute } from "./modules/ssr/routes/ssrRoute";
 
 export type AppOptions = Partial<FastifyServerOptions>;
+
+
 
 async function buildApp(options: AppOptions = {}) {
 	const fastify = Fastify({ logger: true });
@@ -33,9 +36,15 @@ async function buildApp(options: AppOptions = {}) {
 		fastify.log.info("Finished loading plugins");
 	}
 
+	await fastify.register(require("@fastify/static"), {
+	root: path.join(process.cwd(), "public"),
+	prefix: "/",
+});
+
 	fastify.register(getFeedDataRoutes, { prefix: "/feed" });
 	fastify.register(authRoutes, { prefix: "/auth" });
 	fastify.register(newsRoutes, { prefix: "/news" });
+	fastify.register(ssrRoute, { prefix: "/ssr" });
 
 	fastify.ready().then(() => {
 		const feedJob = createScheduledFeedJob(

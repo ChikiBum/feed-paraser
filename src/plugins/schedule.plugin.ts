@@ -5,11 +5,11 @@ import fp from "fastify-plugin";
 const pluginName = "schedule-plugin";
 
 const schedulePlugin: FastifyPluginAsync = async (fastify) => {
-  await fastify.register(fastifySchedule);
-  fastify.log.info("✅ Schedule plugin loaded successfully");
-  fastify.pluginLoaded(pluginName);
+	await fastify.register(fastifySchedule);
+	fastify.log.info("✅ Schedule plugin loaded successfully");
+	fastify.pluginLoaded(pluginName);
 };
 
-export default fp(schedulePlugin, { 
-  name: pluginName
+export default fp(schedulePlugin, {
+	name: pluginName,
 });
