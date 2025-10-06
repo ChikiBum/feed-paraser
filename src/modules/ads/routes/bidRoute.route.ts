@@ -1,4 +1,3 @@
-import { PrismaClient } from "@prisma/client";
 import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { bidSchema } from "../schemas/bid.schema";
 import {
@@ -9,8 +8,6 @@ import {
 	filterBySize,
 } from "../services/creativeFilter";
 import type { BidRequest } from "../types/ads.type";
-
-const prisma = new PrismaClient();
 
 export default async function bidRoute(fastify: FastifyInstance) {
 	fastify.post(
@@ -24,13 +21,13 @@ export default async function bidRoute(fastify: FastifyInstance) {
 		) => {
 			const req = request.body;
 
-			const allCreatives = await prisma.creative.findMany();
+			const allCreatives = await fastify.prisma.creative.findMany();
 
 			const pipeline = [
 				filterBySize,
 				filterByGeo,
 				filterByBidfloor,
-				// filterByAnonId,
+				filterByAnonId,
 			];
 
 			const filtered = await applyFilters(allCreatives, req, pipeline);
@@ -42,7 +39,7 @@ export default async function bidRoute(fastify: FastifyInstance) {
 			const creative = filtered[0];
 			const [w, h] = req.sizes[0];
 
-			await prisma.event.create({
+			await fastify.prisma.event.create({
 				data: {
 					anonId: req.anonId,
 					type: "impression",

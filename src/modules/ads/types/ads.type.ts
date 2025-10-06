@@ -1,4 +1,4 @@
-import { type Creative, Event } from "@prisma/client";
+import { type Creative, Event, PrismaClient } from "@prisma/client";
 
 export type BidRequest = {
 	bidId: string;

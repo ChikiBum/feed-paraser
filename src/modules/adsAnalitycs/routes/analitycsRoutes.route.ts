@@ -1,11 +1,8 @@
-import { PrismaClient } from "@prisma/client";
 import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { eventSchema } from "../schemas/event.schema";
 import type { Event } from "../types/analitycs.type";
 
-const prisma = new PrismaClient();
-
-export default async function analyticsRoute(fastify: FastifyInstance) {
+export async function analyticsRoute(fastify: FastifyInstance) {
 	fastify.post(
 		"/event/:type",
 		{
@@ -21,7 +18,7 @@ export default async function analyticsRoute(fastify: FastifyInstance) {
 			const { type } = request.params;
 			const { anonId, adId } = request.body;
 
-			await prisma.event.create({
+			await fastify.prisma.event.create({
 				data: { anonId, adId, type },
 			});
 
