@@ -41,7 +41,7 @@ export async function userGridSettingsRoutes(fastify: FastifyInstance) {
 			try {
 				const userId = (request.user as { id: string }).id;
 				const body = request.body as GridUserSettingsInput;
-
+				console.log("body ", body);
 				let settings: GridUserSettings;
 
 				if (body.viewName) {
@@ -54,7 +54,7 @@ export async function userGridSettingsRoutes(fastify: FastifyInstance) {
 						},
 						update: {
 							filters: body.filters,
-							visibleColumns: body.visibleColumns,
+							columns: body.columns,
 							sort: body.sort,
 							pageSize: body.pageSize,
 							updatedAt: new Date(),
@@ -63,7 +63,7 @@ export async function userGridSettingsRoutes(fastify: FastifyInstance) {
 							userId,
 							viewName: body.viewName,
 							filters: body.filters,
-							visibleColumns: body.visibleColumns,
+							columns: body.columns,
 							sort: body.sort,
 							pageSize: body.pageSize,
 						},
@@ -73,7 +73,7 @@ export async function userGridSettingsRoutes(fastify: FastifyInstance) {
 						data: {
 							userId,
 							filters: body.filters,
-							visibleColumns: body.visibleColumns,
+							columns: body.columns,
 							sort: body.sort,
 							pageSize: body.pageSize,
 						},

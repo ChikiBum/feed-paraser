@@ -98,7 +98,7 @@ model UserGridSettings {
   userId         String   @db.ObjectId
   viewName       String?
   filters        Json
-  visibleColumns String[]
+  columns String[]
   sort           Json
   pageSize       Int      @default(100)
   createdAt      DateTime @default(now())

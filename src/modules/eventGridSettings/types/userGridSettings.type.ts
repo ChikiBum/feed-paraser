@@ -6,7 +6,7 @@ export type GridSort = {
 export type GridUserSettingsInput = {
 	viewName?: string;
 	filters: Record<string, any>;
-	visibleColumns: string[];
+	columns: string[];
 	sort: GridSort[];
 	pageSize: number;
 };
@@ -16,7 +16,7 @@ export type GridUserSettings = {
 	userId: string;
 	viewName?: string | null;
 	filters: Record<string, any>;
-	visibleColumns: string[];
+	columns: string[];
 	sort: GridSort[];
 	pageSize: number;
 	createdAt: string;

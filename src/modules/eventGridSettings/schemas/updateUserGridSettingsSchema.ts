@@ -26,7 +26,7 @@ export const updateUserGridSettingsSchema = {
 				type: "object",
 				description: "Applied filters",
 			},
-			visibleColumns: {
+			columns: {
 				type: "array",
 				items: { type: "string" },
 				description: "Visible columns",
@@ -53,7 +53,7 @@ export const updateUserGridSettingsSchema = {
 			{
 				viewName: "default",
 				filters: { hour: "10:00" },
-				visibleColumns: ["date", "hour", "uniqueUidInit"],
+				columns: ["date", "hour", "uniqueUidInit"],
 				sort: [{ field: "date", direction: "desc" }],
 				pageSize: 100,
 			},
@@ -70,7 +70,7 @@ export const updateUserGridSettingsSchema = {
 						userId: { type: "string" },
 						viewName: { type: "string" },
 						filters: { type: "object" },
-						visibleColumns: { type: "array", items: { type: "string" } },
+						columns: { type: "array", items: { type: "string" } },
 						sort: {
 							type: "array",
 							items: {
@@ -90,7 +90,7 @@ export const updateUserGridSettingsSchema = {
 						"userId",
 						"viewName",
 						"filters",
-						"visibleColumns",
+						"columns",
 						"sort",
 						"pageSize",
 						"createdAt",
@@ -105,7 +105,7 @@ export const updateUserGridSettingsSchema = {
 						userId: "651d0b7f4e2d7e001f1e1111",
 						viewName: "default",
 						filters: { hour: "10:00" },
-						visibleColumns: ["date", "hour", "uniqueUidInit"],
+						columns: ["date", "hour", "uniqueUidInit"],
 						sort: [{ field: "date", direction: "desc" }],
 						pageSize: 100,
 						createdAt: "2025-10-01T14:00:00.000Z",

@@ -23,7 +23,7 @@ export const getUserGridSettingsSchema = {
 								examples: ["default", "custom1"],
 							},
 							filters: { type: "object", description: "Applied filters" },
-							visibleColumns: {
+							columns: {
 								type: "array",
 								items: { type: "string" },
 								description: "Visible columns",
@@ -47,7 +47,7 @@ export const getUserGridSettingsSchema = {
 						required: [
 							"id",
 							"filters",
-							"visibleColumns",
+							"columns",
 							"sort",
 							"pageSize",
 							"createdAt",
@@ -63,7 +63,7 @@ export const getUserGridSettingsSchema = {
 							id: "651d0b7f4e2d7e001f1e1234",
 							viewName: "default",
 							filters: { hour: "10:00" },
-							visibleColumns: ["date", "hour", "uniqueUidInit"],
+							columns: ["date", "hour", "uniqueUidInit"],
 							sort: [{ field: "date", direction: "desc" }],
 							pageSize: 100,
 							createdAt: "2025-10-01T14:00:00.000Z",
