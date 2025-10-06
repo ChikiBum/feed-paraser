@@ -7,15 +7,6 @@
 	"sessions": {
 		"default": [
 			{
-				"name": "prebid test server",
-				"autoExecuteCommands": true,
-				"icon": "rocket",
-				"color": "terminal.ansiGreen",
-				"commands": [
-					"npx gulp serve-e2e-dev --modules=adtelligentBidAdapter,bidmaticBidAdapter,obozhkoBidAdapter"
-				]
-			},
-			{
 				"name": "npm run dev",
 				"autoExecuteCommands": true,
 				"icon": "circle-filled",
@@ -28,27 +19,7 @@
 				"icon": "cloud",
 				"color": "terminal.ansiGreen",
 				"commands": ["docker-compose up -d mongo"]
-			},
-			[
-				{
-					"name": "docker:ros",
-					"commands": [""]
-				},
-				{
-					"name": "docker:k8s",
-					"commands": [""]
-				}
-			],
-			[
-				{
-					"name": "docker:nats",
-					"commands": [""]
-				},
-				{
-					"name": "docker:fleet",
-					"commands": [""]
-				}
-			]
+			}
 		],
 		"saved-session": [
 			{

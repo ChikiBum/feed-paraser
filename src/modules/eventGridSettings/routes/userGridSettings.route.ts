@@ -11,7 +11,7 @@ import type {
 
 export async function userGridSettingsRoutes(fastify: FastifyInstance) {
 	fastify.get(
-		"/user-grid-settings",
+		"/get-user-grid-settings",
 		{
 			preValidation: [fastify.authenticate],
 			schema: getUserGridSettingsSchema,
@@ -32,7 +32,7 @@ export async function userGridSettingsRoutes(fastify: FastifyInstance) {
 	);
 
 	fastify.post(
-		"/user-grid-settings",
+		"/save-user-grid-settings",
 		{
 			preValidation: [fastify.authenticate],
 			schema: createUserGridSettingsSchema,
@@ -142,7 +142,7 @@ export async function userGridSettingsRoutes(fastify: FastifyInstance) {
 	);
 
 	fastify.delete(
-		"/user-grid-settings/:id",
+		"/delete-user-grid-settings/:id",
 		{
 			preValidation: [fastify.authenticate],
 			schema: deleteUserGridSettingsSchema,

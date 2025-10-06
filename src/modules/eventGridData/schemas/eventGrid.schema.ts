@@ -1,4 +1,4 @@
-import { EVENT_TYPES } from "../types/analitycs.type";
+import { EVENT_TYPES } from "../../adsAnalitycs/types/analitycs.type";
 
 export const eventGridSchema = {
 	tags: ["analytics", "grid"],
@@ -15,6 +15,7 @@ export const eventGridSchema = {
 					type: { type: "string", enum: EVENT_TYPES },
 					adId: { type: "string" },
 					anonId: { type: "string" },
+					createdAt: { type: "string", format: "date" },
 					dateFrom: { type: "string", format: "date-time" },
 					dateTo: { type: "string", format: "date-time" },
 				},
