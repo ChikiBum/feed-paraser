@@ -37,6 +37,9 @@ export const bidSchema = {
 				adContent: { type: "string" },
 				currency: { type: "string" },
 				ttl: { type: "number" },
+				message: { type: "string" },
+				nobid: { type: "boolean" },
+				reason: { type: "string" },
 			},
 		},
 		400: {

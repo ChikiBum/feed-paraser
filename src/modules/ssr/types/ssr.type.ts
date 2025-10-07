@@ -4,7 +4,7 @@ export interface LineItem {
 	min_cpm: string;
 	max_cpm: string;
 	geo: string;
-	ad_type: "banner" | "video" | "native" | "popup" | "popunder";
+	ad_type: "banner" | "video";
 	frequency: string;
 	creative_filename: string;
 	creative_path?: string;

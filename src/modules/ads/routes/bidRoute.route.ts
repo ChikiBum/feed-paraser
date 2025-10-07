@@ -33,7 +33,13 @@ export default async function bidRoute(fastify: FastifyInstance) {
 			const filtered = await applyFilters(allCreatives, req, pipeline);
 
 			if (!filtered.length) {
-				return reply.send({ requestId: req.adUnitCode, nobid: true });
+				console.log("bidRoute.route.ts !filtered.length ", !filtered.length);
+				return reply.send({
+					requestId: req.adUnitCode,
+					nobid: true,
+					message: "no bid from obozhko adapter",
+					reason: "no_creatives_available",
+				});
 			}
 
 			const creative = filtered[0];

@@ -100,9 +100,6 @@ const CreativeForm: React.FC = () => {
 								<option value="">Оберіть тип реклами</option>
 								<option value="banner">🖼️ Банер</option>
 								<option value="video">🎥 Відео</option>
-								<option value="native">📱 Нативна</option>
-								<option value="popup">🔗 Popup</option>
-								<option value="popunder">⬇️ Popunder</option>
 							</select>
 						</div>
 
