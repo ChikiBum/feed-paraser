@@ -7,6 +7,7 @@ import type {
 	EventGridWhere,
 } from "../types/eventGrid.type";
 
+
 export async function eventGridDataRoute(fastify: FastifyInstance) {
 	fastify.post(
 		"/grid",
