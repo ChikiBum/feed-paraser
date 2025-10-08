@@ -85,7 +85,7 @@ export async function getFeedDataRoutes(fastify: FastifyInstance) {
         fastify.log.error("Error deleting existing news:", error);
       }
 
-      const limit = Number(process.env.NEW_PER_USER_LIMIT) || 10;
+      const limit = Number(process.env.NEWS_PER_USER_LIMIT) || 10;
 
       const iterateItems = limit < items.length ? items.slice(0, limit) : items;
 

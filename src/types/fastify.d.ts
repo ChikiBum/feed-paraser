@@ -1,3 +1,4 @@
+import type { createClient } from "@clickhouse/client";
 import type { PrismaClient } from "@prisma/client";
 import type { FastifyReply, FastifyRequest } from "fastify";
 import type { ToadScheduler } from "toad-scheduler";
@@ -15,6 +16,12 @@ declare module "fastify" {
 			request: FastifyRequest,
 			reply: FastifyReply,
 		) => Promise<void>;
+
+		clickhouse: {
+			client: ReturnType<typeof createClient>;
+			ping(): Promise<boolean>;
+			close(): Promise<void>;
+		};
 	}
 
 	interface FastifyRequest {

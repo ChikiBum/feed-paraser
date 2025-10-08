@@ -5,6 +5,7 @@ import configPlugin from "./config";
 import bidRoute from "./modules/ads/routes/bidRoute.route";
 import { analyticsRoute } from "./modules/adsAnalitycs/routes/analitycsRoutes.route";
 import { authRoutes } from "./modules/auth/routes/auth.route";
+import  clickhouseRoutes from "./modules/clickhouse/routes/clickhouse.route";
 import { eventGridDataRoute } from "./modules/eventGridData/routes/eventGrid.route";
 import { userGridSettingsRoutes } from "./modules/eventGridSettings/routes/userGridSettings.route";
 import { getFeedDataRoutes } from "./modules/feedParser/routes/feedParser.route";
@@ -66,6 +67,7 @@ async function buildApp(options: AppOptions = {}) {
 	fastify.register(analyticsRoute, { prefix: "/ads" });
 	fastify.register(eventGridDataRoute, { prefix: "/statistics" });
 	fastify.register(userGridSettingsRoutes, { prefix: "/settings" });
+	fastify.register(clickhouseRoutes, { prefix: "/clickhouse" });
 
 	fastify.ready().then(() => {
 		const feedJob = createScheduledFeedJob(
