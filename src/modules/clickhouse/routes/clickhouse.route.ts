@@ -53,7 +53,7 @@ async function clickhouseRoutes(fastify: FastifyInstance) {
 	});
 
 	fastify.get("/health", {
-		handler: async (request, reply) => {
+		handler: async (_request, reply) => {
 			try {
 				const isHealthy = await fastify.clickhouse.ping();
 
